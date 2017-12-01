@@ -1,6 +1,6 @@
-# WatchTower
+# WatchTower 数据中心网络监控
 
-#### 一、基础数据表
+## 一、基础数据表
 
 **datacenter**: 定义数据中心名称、codename，通过codename和设备所在机房进行关联
 
@@ -28,7 +28,7 @@
 
 **view_portgroup:** 关联`port`、`portgroup`、`device`三张表
 
-#### 二、数据抓取程序
+## 二、数据抓取程序
 
 ##### getDevices.py
 
@@ -70,5 +70,61 @@
 
 此程序用于提供基础数据mysql的http api，使用uwsgi开发，提供get/post接口，url通过/api/`{table}`/来调用，可按字段查询，另通过sql参数可提供where语句的复杂查询
 
-#### 三、监控数据
+## 三、监控数据
+
+监控数据都存储在influxdb，snmpwalker.py抓取的结果存在snmp库中，snmp_portgroup抓取的数据存在snmpnew中。snmp库每台设备一张表，表名为设备ip，snmpnew每个portgroup一张表，表名为portgroup名称。
+
+```
+> show databases
+name: databases
+name
+----
+_internal
+snmp
+snmpnew
+```
+
+```
+> use snmp
+> select * from "10.149.1.134" limit 2
+name: 10.149.1.134
+time                ifHCInOctets     ifHCOutOctets    ifInErrors ifInUcastPkts ifOperStatus ifOutErrors ifOutUcastPkts ifindex ifname
+----                ------------     -------------    ---------- ------------- ------------ ----------- -------------- ------- ------
+1507527248756286782 180341358151028  92432149688206   0          1512643599    1            0           3217864119     1       GigabitEthernet1/0/11
+1507527248756286782 3012893271170626 3548530337647621 0          1552092790    1            0           4089709693     99      Ten-GigabitEthernet1/0/1
+> use snmpnew
+> select * from /^公网：电信$/ limit 2
+name: 公网：电信
+time                device_ip  ifHCInOctets    ifHCOutOctets    ifInErrors ifInUcastPkts ifOperStatus ifOutErrors ifOutUcastPkts ifindex ifname
+----                ---------  ------------    -------------    ---------- ------------- ------------ ----------- -------------- ------- ------
+1507691886324274970 10.135.1.1 696169018535421 2846296772727103 0          1237080399    1            0           1138560445     4242    Ten-GigabitEthernet2/5/0/34:2
+1507691886324274970 10.135.1.1 915746057555810 2960801668357786 1          2888292000    1            0           3342504025     762     Ten-GigabitEthernet1/5/0/34:2
+> 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
