@@ -2,7 +2,7 @@
 -- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Generation Time: 2017-12-01 06:03:34
+-- Generation Time: 2017-12-01 07:36:35
 -- 服务器版本： 5.5.28-log
 -- PHP Version: 5.5.38
 
@@ -14,6 +14,37 @@ SET time_zone = "+00:00";
 --
 -- Database: `nms`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `config_alert`
+--
+
+CREATE TABLE `config_alert` (
+  `id` int(11) NOT NULL,
+  `device_ip` varchar(40) NOT NULL,
+  `ifindex` varchar(16) NOT NULL,
+  `threshold` varchar(8) NOT NULL COMMENT '单位：%',
+  `frequence` varchar(8) DEFAULT '1' COMMENT '连续几次报警',
+  `tag` varchar(64) DEFAULT NULL,
+  `inuse` varchar(3) DEFAULT 'y'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `config_collector`
+--
+
+CREATE TABLE `config_collector` (
+  `id` int(11) NOT NULL,
+  `device_ip` varchar(40) NOT NULL,
+  `ifindex` varchar(16) NOT NULL,
+  `period` varchar(8) NOT NULL DEFAULT '60' COMMENT '单位：秒',
+  `inuse` varchar(3) DEFAULT 'y',
+  `tag` varchar(128) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -91,6 +122,16 @@ CREATE TABLE `dev_role` (
   `name` varchar(128) NOT NULL,
   `codename` varchar(128) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `dev_role`
+--
+
+INSERT INTO `dev_role` (`id`, `name`, `codename`) VALUES
+(1, '接入交换机', 'tor'),
+(3, '核心交换机', 'pod-core'),
+(5, '内网路由器', 'dci-router'),
+(7, '汇聚交换机', 'aggr');
 
 -- --------------------------------------------------------
 
@@ -297,6 +338,18 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `v
 --
 
 --
+-- Indexes for table `config_alert`
+--
+ALTER TABLE `config_alert`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `config_collector`
+--
+ALTER TABLE `config_collector`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `config_oid`
 --
 ALTER TABLE `config_oid`
@@ -430,3 +483,4 @@ ALTER TABLE `topology_node_position`
 ALTER TABLE `topology_view`
   MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
+
