@@ -2,7 +2,6 @@
 -- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Host: monitor.nms.rds.sogou
 -- Generation Time: 2017-12-01 06:03:34
 -- 服务器版本： 5.5.28-log
 -- PHP Version: 5.5.38
