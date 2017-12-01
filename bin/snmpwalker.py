@@ -13,7 +13,7 @@ import json
 import pprint
 import sys
 import MySQLdb as mysql
-from fastsnmpy import SnmpSession
+#from fastsnmpy import SnmpSession
 import json
 import netsnmp
 from influxdb import InfluxDBClient
@@ -81,7 +81,7 @@ class SnmpWalker(object):
         return 
 
     ''' fastsnmpy '''
-
+    '''
     def walker(self):
         newsession = SnmpSession (
             targets = self.results.keys(),
@@ -96,6 +96,7 @@ class SnmpWalker(object):
             i['key'] = self.oids[i['oid']]
         logging.debug('Snmp walker finished...')
         return data
+    '''
 
     ''' netsnmp threading start '''
 

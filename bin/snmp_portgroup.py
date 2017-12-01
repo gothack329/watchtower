@@ -10,7 +10,6 @@ import json
 import pprint
 import sys
 import MySQLdb as mysql
-from fastsnmpy import SnmpSession
 import json
 import netsnmp
 from influxdb import InfluxDBClient
