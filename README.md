@@ -1,4 +1,4 @@
-# WatchTower 数据中心网络监控
+## WatchTower 数据中心网络监控
 
 ## 一、基础数据表
 
@@ -68,7 +68,13 @@
 
 ##### api.py
 
-此程序用于提供基础数据mysql的http api，使用uwsgi开发，提供get/post接口，url通过/api/`{table}`/来调用，可按字段查询，另通过sql参数可提供where语句的复杂查询
+此程序用于提供基础数据mysql的http api，使用uwsgi开发，提供get/post接口，url通过/api/`{table}`/来调用，可按字段查询，另通过sql参数可提供where语句的复杂查询。不加参数则默认显示20条记录，可以通过limit=none显示全部或指定返回记录数。
+
+##### logins
+
+登陆跳板程序
+
+
 
 ## 三、监控数据
 
@@ -101,23 +107,6 @@ time                device_ip  ifHCInOctets    ifHCOutOctets    ifInErrors ifInU
 1507691886324274970 10.135.1.1 915746057555810 2960801668357786 1          2888292000    1            0           3342504025     762     Ten-GigabitEthernet1/5/0/34:2
 > 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
