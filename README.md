@@ -114,7 +114,7 @@ time                device_ip  ifHCInOctets    ifHCOutOctets    ifInErrors ifInU
 
 ![](https://ws1.sinaimg.cn/large/006tNc79ly1fm19w2876vj313q0ks47s.jpg)
 
-
+拓扑采用Django绘制，待补充
 
 
 
