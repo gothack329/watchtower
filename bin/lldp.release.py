@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO)
 
 class LldpWalker(object):
     def __init__(self):
-        self.apiurl = ''
+        self.apiurl = 'http://localhost'
         self.oids = defaultdict(dict) 
         self.taskq = Queue.Queue()
         self.devices = defaultdict(dict) 
@@ -47,7 +47,8 @@ class LldpWalker(object):
         
     def getDevices(self):
         uri = '/api/device/?limit=none'
-        #uri = '/api/device/?device_role=dci-router&device_ip=1.1.1.1'
+        #uri = '/api/device/?device_role=dci-router,pod-core'
+        #uri = '/api/device/?device_role=dci-router&device_ip=192.168.100.39,192.168.100.34'
         url = self.apiurl+uri
         r = requests.get(url, timeout=20)
         devs = json.loads(r.text)
@@ -136,15 +137,17 @@ class LldpWalker(object):
                 remote_host = i.val
                 try:
                     local_ifindex = portlist[i.tag.split('.')[-2]]
-                    if remote_host not in self._devices.keys():
+                    if remote_host not in self._devices.keys() or len(remote_host) == 0:
+                        logging.info("Remote host [%s] doesn't in the host list." % remote_host)
                         continue
                     lldp[local_ifindex]={'aid':None,'zid':None,'remname':None,'remport':None}
                     lldp[local_ifindex]['aid'] = int(self.ports[local_ip+'_'+local_ifindex]['id']) 
                     lldp[local_ifindex]['remname'] = remote_host
                 except Exception,e: 
-                    logging.error(e)
-                    pass
-                    #print host,vendor,i.tag,e
+                #    logging.error('145 '+str(e))
+                #    pass
+                    #logging.error(host,vendor,i.tag,str(e))
+                    print host,vendor,i.tag,remote_host
 
 
             # step 3: oid2
@@ -154,28 +157,34 @@ class LldpWalker(object):
             ret = session.walk(var_list)
             logging.debug('%s Thread [%s] :%s walk finished.' % (time.time(),num,host))
             for i in var_list:
+                remote_ifname = i.val
                 try:
                     local_ifindex = portlist[i.tag.split('.')[-2]]
-                    remote_ifname = i.val
+                except:
+                    continue
+                if not lldp.has_key(local_ifindex):
+                    logging.info("Remote interface [%s] doesn't in the port list. " % remote_ifname)
+                    continue
 
-                    if remote_ifname.startswith('BE'):
-                        # for cisco asr9k 
-                        continue
-                    elif remote_ifname.startswith('Hu'):
-                        # for cisco ifname short
-                        remote_ifname = remote_ifname.replace('Hu','HundredGigE') 
-                    elif remote_ifname.startswith('Ethernet') or remote_ifname.startswith('Ten-GigabitEthernet') or remote_ifname.startswith('FortyGigE'):
-                        pass
-                    else:
-                        remote_ifname = remote_ifname.replace('Eth','Ethernet')
-                        remote_ifname = remote_ifname.replace('Te','TenGigE')
-                        remote_ifname = remote_ifname.replace('Fo','FortyGigE')
-                    lldp[local_ifindex]['remport'] = remote_ifname 
+                if remote_ifname.startswith('BE'):
+                    # for cisco asr9k 
+                    continue
+                elif remote_ifname.startswith('Ethernet') or remote_ifname.startswith('Ten-GigabitEthernet') or remote_ifname.startswith('FortyGigE') or remote_ifname.startswith('HundredGigE'):
+                    pass
+                else:
+                    remote_ifname = remote_ifname.replace('Hu','HundredGigE') 
+                    remote_ifname = remote_ifname.replace('Eth','Ethernet')
+                    remote_ifname = remote_ifname.replace('Te','TenGigE')
+                    remote_ifname = remote_ifname.replace('Fo','FortyGigE')
+                lldp[local_ifindex]['remport'] = remote_ifname 
+                try:
                     lldp[local_ifindex]['zid'] = int(self._ports[lldp[local_ifindex]['remname']+'_'+lldp[local_ifindex]['remport']]['id'])
                 except Exception,e:
-                    logging.error(e)
-                    #print host,vendor,i.tag,e
-                    pass
+                    print len(lldp[local_ifindex]['remname'])
+                #    #logging.error('176 '+str(e))
+                #    print host,vendor,i.tag,remote_ifname
+                #    #logging.error(host,vendor,i.tag,str(e))
+                #    pass
             
             for k,v in lldp.items():
                 if v['zid']==None:
@@ -202,7 +211,7 @@ class LldpWalker(object):
                 cur.execute(sql)
                 insertcount+=1
             except Exception,e:
-                logging.error(e)
+                logging.error('205 '+str(e))
                 try:
                     sql = 'update lldpid set tag="%s" where aid="%d" and zid="%d"' % (' ',i['aid'],i['zid'])
                     cur.execute(sql)
