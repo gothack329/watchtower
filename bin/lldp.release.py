@@ -213,8 +213,7 @@ class LldpWalker(object):
             except Exception,e:
                 logging.error('205 '+str(e))
                 try:
-                    ids = [' '] + ids
-                    sql = 'update lldpid set tag="%s" where aid="%d" and zid="%d"' % tuple(ids)
+                    sql = 'update lldpid set mtime="%s" where aid="%d" and zid="%d"' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),ids[0],ids[1]) 
                     cur.execute(sql)
                     updatecount+=1
                 except:
