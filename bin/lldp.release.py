@@ -213,7 +213,8 @@ class LldpWalker(object):
             except Exception,e:
                 logging.error('205 '+str(e))
                 try:
-                    sql = 'update lldpid set tag="%s" where aid="%d" and zid="%d"' % (' ',i['aid'],i['zid'])
+                    ids = [' '] + ids
+                    sql = 'update lldpid set tag="%s" where aid="%d" and zid="%d"' % tuple(ids)
                     cur.execute(sql)
                     updatecount+=1
                 except:
