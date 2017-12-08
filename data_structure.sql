@@ -2,7 +2,7 @@
 -- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Generation Time: 2017-12-01 07:36:35
+-- Generation Time: 2017-12-08 08:55:38
 -- 服务器版本： 5.5.28-log
 -- PHP Version: 5.5.38
 
@@ -157,7 +157,8 @@ CREATE TABLE `lldpid` (
   `aid` int(11) NOT NULL,
   `zid` int(11) NOT NULL,
   `tag` varchar(32) DEFAULT NULL,
-  `ctime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `ctime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `mtime` varchar(40) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -253,9 +254,10 @@ CREATE TABLE `view_lldp` (
 ,`zport` varchar(128)
 ,`zip` varchar(40)
 ,`zdevid` int(11)
-,`zid` int(11)
+,`zportid` int(11)
 ,`tag` varchar(32)
 ,`ctime` timestamp
+,`mtime` varchar(40)
 );
 
 -- --------------------------------------------------------
@@ -276,6 +278,7 @@ CREATE TABLE `view_port` (
 ,`portgroup` varchar(128)
 ,`idc` varchar(128)
 ,`device_role` varchar(128)
+,`tag` varchar(32)
 );
 
 -- --------------------------------------------------------
@@ -313,7 +316,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `v
 --
 DROP TABLE IF EXISTS `view_lldp`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `view_lldp`  AS  select `b`.`id` AS `id`,`a`.`id` AS `aportid`,`d`.`id` AS `adevid`,`a`.`device_ip` AS `aip`,`a`.`name` AS `aport`,`c`.`name` AS `zport`,`c`.`device_ip` AS `zip`,`e`.`id` AS `zdevid`,`c`.`id` AS `zid`,`b`.`tag` AS `tag`,`b`.`ctime` AS `ctime` from ((((`port` `a` join `lldpid` `b`) join `port` `c`) join `device` `d`) join `device` `e`) where ((`a`.`id` = `b`.`aid`) and (`c`.`id` = `b`.`zid`) and (`a`.`device_ip` = `d`.`device_ip`) and (`c`.`device_ip` = `e`.`device_ip`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `view_lldp`  AS  select `b`.`id` AS `id`,`a`.`id` AS `aportid`,`d`.`id` AS `adevid`,`a`.`device_ip` AS `aip`,`a`.`name` AS `aport`,`c`.`name` AS `zport`,`c`.`device_ip` AS `zip`,`e`.`id` AS `zdevid`,`c`.`id` AS `zportid`,`b`.`tag` AS `tag`,`b`.`ctime` AS `ctime`,`b`.`mtime` AS `mtime` from ((((`port` `a` join `lldpid` `b`) join `port` `c`) join `device` `d`) join `device` `e`) where ((`a`.`id` = `b`.`aid`) and (`c`.`id` = `b`.`zid`) and (`a`.`device_ip` = `d`.`device_ip`) and (`c`.`device_ip` = `e`.`device_ip`)) ;
 
 -- --------------------------------------------------------
 
@@ -322,7 +325,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `v
 --
 DROP TABLE IF EXISTS `view_port`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `view_port`  AS  select `a`.`id` AS `port_id`,`a`.`name` AS `port_name`,`a`.`ifindex` AS `port_ifindex`,`a`.`ifdesc` AS `port_ifdesc`,`a`.`device_ip` AS `device_ip`,`b`.`name` AS `device_name`,`b`.`vendor` AS `vendor`,`a`.`speed` AS `port_speed`,`a`.`portgroup` AS `portgroup`,`b`.`idc` AS `idc`,`b`.`device_role` AS `device_role` from (`port` `a` join `device` `b`) where (`a`.`device_ip` = `b`.`device_ip`) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`network`@`10.%` SQL SECURITY DEFINER VIEW `view_port`  AS  select `a`.`id` AS `port_id`,`a`.`name` AS `port_name`,`a`.`ifindex` AS `port_ifindex`,`a`.`ifdesc` AS `port_ifdesc`,`a`.`device_ip` AS `device_ip`,`b`.`name` AS `device_name`,`b`.`vendor` AS `vendor`,`a`.`speed` AS `port_speed`,`a`.`portgroup` AS `portgroup`,`b`.`idc` AS `idc`,`b`.`device_role` AS `device_role`,`a`.`tag` AS `tag` from (`port` `a` join `device` `b`) where (`a`.`device_ip` = `b`.`device_ip`) ;
 
 -- --------------------------------------------------------
 
@@ -457,13 +460,13 @@ ALTER TABLE `isp`
 -- 使用表AUTO_INCREMENT `lldpid`
 --
 ALTER TABLE `lldpid`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191101;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=334465;
 
 --
 -- 使用表AUTO_INCREMENT `port`
 --
 ALTER TABLE `port`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271923;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271925;
 
 --
 -- 使用表AUTO_INCREMENT `portgroup`
@@ -475,7 +478,7 @@ ALTER TABLE `portgroup`
 -- 使用表AUTO_INCREMENT `topology_node_position`
 --
 ALTER TABLE `topology_node_position`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=545127;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=545337;
 
 --
 -- 使用表AUTO_INCREMENT `topology_view`
@@ -483,4 +486,3 @@ ALTER TABLE `topology_node_position`
 ALTER TABLE `topology_view`
   MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
-
