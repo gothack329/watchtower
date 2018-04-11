@@ -112,6 +112,19 @@ class LldpWalker(object):
                     portindex = i.tag.split('.')[-1]
                     ifindex = i.val
                     portlist[portindex]=ifindex
+                    
+                tmplist =[int(x) for x in  portlist.keys()]
+                tmplist.sort()
+
+                if vendor.lower() == 'huawei':
+                    # fix huawei lldp bug
+                    for i in range(tmplist[0],tmplist[-1]):
+                        if portlist.has_key(str(i)):
+                            pass
+                        else:
+                            portlist[str(i)] = str(i-tmp[0]+tmp[1])
+                        tmp = (i,int(portlist[str(i)])) 
+                        
             else:
                 var_list = netsnmp.VarList()
                 var_list.append(netsnmp.Varbind('.1.3.6.1.2.1.2.2.1.2')) # ifdesc
