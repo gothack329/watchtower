@@ -100,7 +100,7 @@ class LldpWalker(object):
             oid1 = 'lldpRemSysName'
             oid2 = 'lldpRemPortId' 
             
-            if vendor.lower() == 'h3c':
+            if vendor.lower() == 'h3c' or vendor.lower() == 'huawei':
                 # step 1: oid0 , for h3c
                 var_list = netsnmp.VarList()
                 var_list.append(netsnmp.Varbind(self.oids[oid0]))
